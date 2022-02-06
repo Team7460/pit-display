@@ -1,5 +1,4 @@
-
-var matches = [];
+const matches = [];
 
 function getDates(value) {
 

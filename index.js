@@ -54,7 +54,7 @@ function checkOnline() {
     if (await isOnline()) {
       signale.await("Online, pulling data from TBA...");
       tbaClient
-        .getTeamEventMatchListSimple(config.teamNum, config.eventKey)
+        .getTeamEventMatchListSimple(process.env.TEAM_NUM, process.env.EVENT_KEY)
         .then(data => {
           fs.writeFile("public/tbaData.json", JSON.stringify(data), err => {
             // throws an error, you could also catch it here
