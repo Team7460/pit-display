@@ -1,21 +1,23 @@
 // /index.js
 
-const isOnline = require("is-online");
-const signale = require("signale");
-const config = require("./config.json");
-const TBA = require("tba-api-storm");
-const fs = require("fs");
-var express = require("express");
-var http = require("http");
-var path = require("path");
-var reload = require("reload");
-var bodyParser = require("body-parser");
-const watch = require("node-watch");
+import isOnline from 'is-online';
+import signale from 'signale';
+import TBA from 'tba-api-storm';
+import fs from 'fs';
+import express from 'express';
+import http from 'http';
+import path from 'path';
+import reload from 'reload';
+import bodyParser from 'body-parser';
+import watch from 'node-watch';
+import 'dotenv/config'
 
-const tbaClient = new TBA(config.tbaKey);
-var app = express();
+const __dirname = path.resolve();
 
-var publicDir = path.join(__dirname, "public");
+const tbaClient = new TBA(process.env.TBA_KEY);
+const app = express();
+
+const publicDir = path.join(__dirname, 'public');
 
 app.set("port", process.env.PORT || 3000);
 app.use(bodyParser.json()); // Parses json, multi-part (file), url-encoded
@@ -26,10 +28,10 @@ app.get("/", function(req, res) {
 
 app.use(express.static(path.join(__dirname, "public")));
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 // Reload code here
-let reloadServer = reload(app);
+let reloadServer = await reload(app);
 
 watch("public/tbaData.json", function() {
   signale.info("Reloading to update match times");
@@ -43,7 +45,8 @@ server.listen(app.get("port"), function() {
   signale.info("Made with <3 by FRC team 7460");
 });
 
-if (!config.tbaKey || !config.teamNum || !config.eventKey) {
+if (!process.env.TBA_KEY || !process.env.TEAM_NUM || !process.env.EVENT_KEY) {
+  console.log(config)
   signale.error("Need to specify TBA key, team number, or event key");
   process.exit(1);
 }
